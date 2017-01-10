@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>Pixel Painter</title>
+    <style>
+      td {
+        height: 15px;
+        width: 15px;
+        border: 1px solid black;
+      }
+    </style>
+  </head>
+  <body>
+    <table id="canvas">
+    </table>
+    <br><br>
+    <table id="palette">
+      <tr>
+        <td style="background-color: #000000;"></td>
+        <td style="background-color: #FF0000;"></td>
+        <td style="background-color: #00FF00;"></td>
+        <td style="background-color: #0000FF;"></td>
+      </tr>
+    </table>
+    <script type="text/javascript">
+      /**
+       * The current color of the paintbrush
+       * @type {String}
+       */
+      var paintColor = '#000000';
+      /**
+       * This draws the squares on the html page.
+       * @param  {number} x The number of squares to draw horizontally.
+       * @param  {number} y The number of squares to draw vertically.
+       */
+      function drawSquares(x, y) {
+        // Loop through the vertical rows first, remember computers start counting at 0
+        for (var i = 0; i < y; i++) {
+          // Find the table.
+          var table = document.querySelector('#canvas');
+          // Create a row to add to the table.
+          var row = document.createElement('tr');
+          // Add the above row to the table.
+          table.appendChild(row);
+          // Loop through the horizontal columns.
+          for (var j = 0; j < x; j++) {
+            // Create a cell to add to the row.
+            var cell = document.createElement('td');
+            // Need to be listening to clicks.
+            cell.addEventListener('click', paint);
+            // Add the cell to the row.
+            row.appendChild(cell);
+          }
+        }
+      }
+
+      /**
+       * Adds event listeners to everything in the palette table.
+       */
+      function makePaletteClickable() {
+        // Single out the palette.
+        var palette = document.querySelector('#palette');
+        // grab all of the cells inside of palette.
+        var colors = palette.querySelectorAll('td');
+        // Loop through those cells.
+        for (var i = 0; i < colors.length; i++) {
+          // Add an event listener to each one.
+          colors[i].addEventListener('click', updateColor);
+        }
+      }
+
+      /**
+       * Gets called when the user clicks on one of the #canvas cells.
+       * @param  {Event} event Everything javacsript feeds us when a user clicks.
+       */
+      function paint(event) {
+        // Set the background color to whatever is currently set in paintColor.
+        event.target.style.backgroundColor = paintColor
+      }
+
+      /**
+       * Gets called when on of the cells in #palette is clicked.
+       * @param  {Event} event All of the information javascript gives us when something is clicked.
+       */
+      function updateColor(event) {
+        // Set the global paint color to whatever square was clicked.
+        paintColor = event.target.style.backgroundColor;
+      }
+      // Draw a grid for the user to paint on.
+      drawSquares(10, 10);
+      // Need to make the palette clickable or the user will be stuck with black.
+      makePaletteClickable();
+
+      // <--------------------- Stretch Goal --------------------->
+      /**
+       * Adds some random colors to the palette
+       * @param {number} numberOfColors The number of random colors to be added.
+       */
+      function addRandomColorsToPalette(numberOfColors) {
+        // Single out the palette then the row.
+        var paletteRow = document.querySelector('#palette').querySelector('tr');
+        // Loop through the numbers
+        for(var i = 0; i < numberOfColors; i++) {
+          // Create a cell to hold the color.
+          var cell = document.createElement('td');
+          // rgb is in the form rgb(xxx, xxx xxx) where x is between 0 and 255.
+          cell.style.backgroundColor = `rgb(${getRandomIntegerBetween(0, 255)}, ${getRandomIntegerBetween(0, 255)}, ${getRandomIntegerBetween(0, 255)})`;
+          // These need to respond to the clicks too.
+          cell.addEventListener('click', updateColor);
+          // Add this color.
+          paletteRow.appendChild(cell);
+        }
+      }
+
+      /**
+       * generates a random number between two digits.
+       * @param  {number} startInclusive the start value
+       * @param  {number} endInclusive   the end value
+       * @return {number}                the random number.
+       */
+      function getRandomIntegerBetween(startInclusive, endInclusive) {
+        return Math.floor(Math.random() * (endInclusive - startInclusive + 1) + startInclusive);
+      }
+
+      // Add some color!
+      addRandomColorsToPalette(20);
+    </script>
+  </body>
+</html>
